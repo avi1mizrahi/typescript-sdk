@@ -88,6 +88,11 @@ export type RequestHandlerExtra = {
    * An abort signal used to communicate if the request was cancelled from the sender's side.
    */
   signal: AbortSignal;
+
+  /**
+   * The transport for the current connection.
+   */
+  transport?: Transport;
 };
 
 /**
@@ -309,7 +314,7 @@ export abstract class Protocol<
 
     // Starting with Promise.resolve() puts any synchronous errors into the monad as well.
     Promise.resolve()
-      .then(() => handler(request, { signal: abortController.signal }))
+      .then(() => handler(request, { signal: abortController.signal, transport: this._transport }))
       .then(
         (result) => {
           if (abortController.signal.aborted) {
